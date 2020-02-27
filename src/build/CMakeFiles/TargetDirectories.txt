@@ -1,0 +1,3 @@
+/u/theshark/Courses/cs354/cs378h/src/ray/build/CMakeFiles/rebuild_cache.dir
+/u/theshark/Courses/cs354/cs378h/src/ray/build/CMakeFiles/ray.dir
+/u/theshark/Courses/cs354/cs378h/src/ray/build/CMakeFiles/edit_cache.dir
