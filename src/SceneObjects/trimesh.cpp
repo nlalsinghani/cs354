@@ -32,7 +32,15 @@ void Trimesh::addNormal(const glm::dvec3& n)
 {
 	normals.emplace_back(n);
 }
-
+bool Trimesh::isTrimesh(){
+	return true;
+}
+std::vector<TrimeshFace *>::iterator Trimesh::beginFace(){
+	return faces.begin();
+}
+std::vector<TrimeshFace *>::iterator Trimesh::endFace(){
+	return faces.end();
+}
 // Returns false if the vertices a,b,c don't all exist
 bool Trimesh::addFace(int a, int b, int c)
 {

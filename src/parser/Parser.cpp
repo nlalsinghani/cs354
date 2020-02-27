@@ -13,6 +13,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include "../scene/bvh.h"
+#include "../scene/bvh.cpp"
 
 extern TraceUI* traceUI;
 
@@ -40,7 +42,8 @@ Scene* Parser::parseScene()
 
   Scene* scene = new Scene;
   unique_ptr<Material> mat( new Material );
-
+  BVH bvh = BVH(scene);
+  bvh.build();
   for( ;; )
   {
     const Token* t = _tokenizer.Peek();

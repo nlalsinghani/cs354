@@ -116,7 +116,7 @@ glm::dvec3 RayTracer::traceRay(ray& r, const glm::dvec3& thresh, int depth, doub
 		bool internal = glm::dot(n, dir) < 0;
 		if(m.Refl() && !internal){
 			glm::dvec3 pos = r.at(i) + RAY_EPSILON * n;
-			glm::dvec3 reflectedDir = 2.0 * glm::dot(n, dir) * n - dir;
+			glm::dvec3 reflectedDir = glm::reflect(dir, n);
 			ray reflectedray = ray(pos, reflectedDir, glm::dvec3(1, 1, 1), ray::REFLECTION);
 			double dummy = 0;
 			colorC += m.kr(i) * traceRay(reflectedray, thresh, depth - 1, dummy);
@@ -152,8 +152,8 @@ glm::dvec3 RayTracer::traceRay(ray& r, const glm::dvec3& thresh, int depth, doub
 			}
 			else if(m.Refl()){
 				glm::dvec3 pos = r.at(i) + RAY_EPSILON * n;
-				glm::dvec3 reflectedDir = -2.0 * glm::dot(n, dir) * n + dir;
-				ray reflectedray= ray(pos, reflectedDir, glm::dvec3(0.0,0.0,0.0), ray::REFLECTION);
+				glm::dvec3 reflectedDir = glm::reflect(dir, n);
+				ray reflectedray = ray(pos, reflectedDir, glm::dvec3(0.0,0.0,0.0), ray::REFLECTION);
 				double dummy;
 				glm::dvec3 color = traceRay(reflectedray, thresh, depth - 1, dummy);
 				if(glm::dot(dir, n) >= 0){

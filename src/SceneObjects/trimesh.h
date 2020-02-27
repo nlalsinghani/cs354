@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "../scene/kdTree.h"
+#include "../scene/bvh.h"
 #include "../scene/material.h"
 #include "../scene/ray.h"
 #include "../scene/scene.h"
@@ -49,6 +50,10 @@ public:
 	void addMaterial(Material *m);
 	void addNormal(const glm::dvec3 &);
 	bool addFace(int a, int b, int c);
+
+	bool isTrimesh();
+	std::vector<TrimeshFace *>::iterator beginFace();
+	std::vector<TrimeshFace *>::iterator endFace();
 
 	const char *doubleCheck();
 

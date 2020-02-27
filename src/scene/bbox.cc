@@ -10,6 +10,11 @@ BoundingBox::BoundingBox(glm::dvec3 bMin, glm::dvec3 bMax)
 {
 }
 
+BoundingBox::BoundingBox(glm::dvec3 center)
+	:bmin(center), bmax(center), bEmpty(false), dirty(true)
+{
+}
+
 bool BoundingBox::intersects(const BoundingBox& target) const
 {
 	return ((target.getMin()[0] - RAY_EPSILON <= bmax[0]) &&

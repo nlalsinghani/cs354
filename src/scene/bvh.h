@@ -5,7 +5,13 @@
 #include <iostream>
 
 #define STACK 512
-#define BIG 1000000.0
+
+class Trimesh;
+class TrimsehFace;
+class Geometry;
+class Scene;
+class MaterilaSceneObject;
+
 
 struct stackNode{
 	int pos;
@@ -17,38 +23,33 @@ struct node{
 	int offset;
 	int num;
 	int start;
-	BoundingBox bb;
+	BoundingBox box;
 };
 
 struct travNode{
 	int i;
 	double mint;
-	travNode();
+	travNode(){}
 	travNode(int i2, double mint2) : i(i2), mint(mint2){}
 };
 
-class Geometry;
-class Scene;
-class MaterilaSceneObject;
-class Trimesh;
-class TrimsehFace;
 
 class BVH{
 public:
 	BVH(const Scene* s){
 		this->scene = s;
 	}
-	~BHV(){
+	~BVH(){
 		delete[] tree;
 	}
 	void build();
-	bool getIntersection(ray& r, isect& i) const;
+//	bool getIntersection(ray& r, isect& i);
 private:
 	int nodeNum;
-	int leaf;
-	std::vector<Geometry> objlist;
-	std::vector<BoundingBox> boxes;
+	int leafs;
+	std::vector<Geometry*> objects;
+	std::vector<BoundingBox*> boxes;
 	node* tree;
 	const Scene* scene;
 
-}
+};

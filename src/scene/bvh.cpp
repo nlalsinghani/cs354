@@ -5,14 +5,11 @@ void BVH::build(){
 
   for(auto iter = scene -> beginObjects(); iter != scene -> endObjects(); iter++){
     Geometry* geo = iter->get();
-    if(geo->isTrimesh()){
       Trimesh* trimesh = (Trimesh*) geo;
       for(auto face = trimesh->beginFace(); face != trimesh->endFace(); face++){
         (*face)->ComputeBoundingBox();
         objects.push_back((Geometry*)(*face));
-      }
-    }else{
-      objects.push_back(geo);
+      
     }
   }
   nodeNum = 0;
@@ -21,7 +18,7 @@ void BVH::build(){
   if(objects.size() == 0)
     return;
 
-  stackNode stack[STACK_SIZE];
+  stackNode stack[STACK];
   int stackptr = 0;
 
   stack[stackptr].start = 0;
@@ -33,12 +30,7 @@ void BVH::build(){
   nodes.resize(objects.size() * 2);
 
   while(stackptr > 0) {
-    if(stackptr >= STACK_SIZE - 1){
-      std::cout << "Stack Overflow in BVH::build()" << std::endl;
-    }
-    if(nodeNum >= objects.size() * 2){
-      std::cout<< "over stack size" << std::endl;
-    }
+
     stackptr--;
     stackNode &crtStackNode( stack[stackptr]);
     int start = crtStackNode.start;
@@ -74,10 +66,6 @@ void BVH::build(){
       }
     }
 
-    if (crtNode.offset == 0){
-      continue;
-    }
-
     int idx = bc.maxDim();
     double split = 0.5 * (bc.getMax()[idx] + bc.getMin()[idx]);
 
@@ -107,65 +95,4 @@ void BVH::build(){
   tree = new node[nodeNum];
   for(int i = 0; i < nodeNum; i++)
     tree[i] = nodes[i];
-}
-
-bool BVH::getIntersection(ray& r, isect& i) const{
-  if(nodeNum == 0)
-    return false;
-  double t = BIG_DOUBLE;
-  travNode stack[STACK_SIZE];
-  int stackptr = 0;
-
-  stack[stackptr].i = 0;
-  stack[stackptr].mint = -BIG_DOUBLE;
-  int cnt = 0;
-  while(stackptr >= 0 ){
-    if(stackptr >= STACK_SIZE - 1){
-      std::cout << "Stack Overflow in BVH::getIntersection()" << std::endl;
-    }
-    int oi = stack[stackptr].i;
-    double near = stack[stackptr].mint;
-    stackptr--;
-
-    const node &crtNode(tree[oi]);
-
-    if(near > t)
-      continue;
-    if(crtNode.offset < 0)
-      std::cout<<"Negtive offset" <<std::endl;
-
-    if(crtNode.offset == 0){
-      cnt++;
-      for(int j = 0; j < crtNode.num; j++){
-        const Geometry* obj = objects[crtNode.start + j];
-        isect temp;
-        if(obj->intersect(r, temp) && temp.getT() < t){
-
-          i = temp;
-          t = temp.getT();
-        }
-      }
-    }else{
-      double t_min_r, t_max_r;
-      bool hitRight = tree[oi + crtNode.offset].box.intersect(r, t_min_r, t_max_r);
-      double t_min_l, t_max_l;
-      bool hitLeft = tree[oi + 1].box.intersect(r, t_min_l, t_max_l);
-
-      if(hitRight && hitLeft){
-        if(t_min_r < t_min_l){
-          stack[++stackptr] = travNode(oi + 1, t_min_l);
-          stack[++stackptr] = travNode(oi + crtNode.offset, t_min_r);
-        }else{
-          stack[++stackptr] = travNode(oi + crtNode.offset, t_min_r);
-          stack[++stackptr] = travNode(oi + 1, t_min_l);
-        }
-      }
-      else if(hitRight)
-        stack[++stackptr] = travNode(oi + crtNode.offset, t_min_r);
-      else if(hitLeft)
-        stack[++stackptr] = travNode(oi + 1, t_min_l);
-    }
-
-  }
-  return t < BIG_DOUBLE - 0.1;
 }

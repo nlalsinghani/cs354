@@ -14,6 +14,7 @@ class BoundingBox {
 public:
 	BoundingBox();
 	BoundingBox(glm::dvec3 bMin, glm::dvec3 bMax);
+	BoundingBox(glm::dvec3 center);
 
 	glm::dvec3 getMin() const { return bmin; }
 	glm::dvec3 getMax() const { return bmax; }
@@ -47,6 +48,21 @@ public:
 			bmax[i] = val;
 			bEmpty = false;
 		}
+	}
+
+	glm::dvec3 getCenter(){
+		return (bmin + bmax) / 2.0;
+	}
+
+	int maxDim(){
+		int idx = 0;
+		if(bmax[1] - bmin[1] > bmax[0] - bmin[0]){
+			idx = 1;
+		}
+		if(bmax[2] - bmin[2] > bmax[1] - bmin[1]){
+			idx = 2;
+		}
+		return idx;
 	}
 
 	// Does this bounding box intersect the target?
